@@ -8,18 +8,56 @@
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
 <project name="nanohttpd" default="default" basedir=".">
-    <description>Builds, tests, and runs the project nanohttpd.</description>
-    <import file="nbproject/build-impl.xml"/>
+   <description>Builds, tests, and runs the project nanohttpd.</description>
+   <import file="nbproject/build-impl.xml"/>
    <!-- =================================================================== -->
    <!-- post NB init                                                          -->
    <!-- =================================================================== -->
 
    <target name="-post-init">   
       <property name="version" value="2.3.1"/>
+      <property name="src.dir" value="src" />
+      <property name="archiveName" value="nanohttpdp"/>       
       <property name="jar-core" value="nanohttpd-${version}.jar"/>     
       <property name="jar-nanolets" value="nanohttpd-nanolets-${version}.jar"/>   
       <property name="jar-webserver" value="nanohttpd-webserver-${version}.jar"/>               	  
    </target>
+   
+   <!-- =================================================================== -->
+   <!-- zip files -->
+   <!-- =================================================================== -->
+   
+   <target depends="init, -post-init, -zipsources, -zipbinaries" description="create zip files" name="zip"> 
+   </target>    
+   
+   <target  name="-zipsources" depends="init, -post-init">
+      <zip compress="true" defaultexcludes="true" zipfile="${dist.dir}/${archiveName}-src-${version}.zip">
+         <fileset description="source" dir="${src.dir}/..">
+            <include name="src/**/*"/>
+         </fileset>
+         
+         <fileset description="miscellanous" dir=".">
+            <include name="README.md"/>
+            <include name="LICENSE.md"/>
+            <include name=".gitignore"/>            
+            <include name="nbproject/**/*.*"/>
+            <include name="build.xml"/>
+         </fileset>         
+      </zip>
+   </target>   
+   
+   <target  name="-zipbinaries" depends="init, -post-init">
+      <zip compress="true" defaultexcludes="true" zipfile="${dist.dir}/${archiveName}-bin-${version}.zip">
+         <fileset description="binaries" dir="${dist.dir}">
+            <include name="*.jar"/>
+         </fileset>
+         
+         <fileset description="miscellanous" dir=".">
+            <include name="README.md"/>
+            <include name="LICENSE.md"/>        
+         </fileset>         
+      </zip>
+   </target>     
    
    <!-- =================================================================== -->
    <!-- NB overwrite targets : jar                                     -->
