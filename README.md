@@ -12,7 +12,7 @@ It is being developed at Github and uses Apache Maven for builds & unit testing:
 ## 2.3.1.1
  * replace the getHostName in the HTTPSession code because it could lead to huge latency
  * Fix a bug in the library where the uriResource would be null in some cases if the address is incorrectly set by the client of the library
-  Note: the jats are still tagged 2.3.1 even if the verfsion is 2.3.1.1
+  Note: the jars are still tagged 2.3.1 even if the version is 2.3.1.1
 
 ## Quickstart
 
