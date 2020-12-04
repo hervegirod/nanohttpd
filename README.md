@@ -8,6 +8,12 @@ It is being developed at Github and uses Apache Maven for builds & unit testing:
  * Coverage Status: [![Coverage Status](https://coveralls.io/repos/NanoHttpd/nanohttpd/badge.svg)](https://coveralls.io/r/NanoHttpd/nanohttpd)
  * Current central released version: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.nanohttpd/nanohttpd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.nanohttpd/nanohttpd)
 
+## Changes from 2.3.1
+## 2.3.1.1
+ * replace the getHostName in the HTTPSession code because it could lead to huge latency
+ * Fix a bug in the library where the uriResource would be null in some cases if the address is incorrectly set by the client of the library
+  Note: the jats are still tagged 2.3.1 even if the verfsion is 2.3.1.1
+
 ## Quickstart
 
 We'll create a custom HTTP server project using Maven for build/dep system. This tutorial assumes you are using a Unix variant and a shell. First, install Maven and Java SDK if not already installed. Then run:

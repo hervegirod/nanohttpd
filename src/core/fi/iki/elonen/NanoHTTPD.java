@@ -8,18 +8,18 @@ package fi.iki.elonen;
  * %%
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice, this
  *    list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of the nanohttpd nor the names of its contributors
  *    may be used to endorse or promote products derived from this software without
  *    specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -630,8 +630,28 @@ public abstract class NanoHTTPD {
          this.inputStream = new BufferedInputStream(inputStream, HTTPSession.BUFSIZE);
          this.outputStream = outputStream;
          this.remoteIp = inetAddress.isLoopbackAddress() || inetAddress.isAnyLocalAddress() ? "127.0.0.1" : inetAddress.getHostAddress().toString();
-         this.remoteHostname = inetAddress.isLoopbackAddress() || inetAddress.isAnyLocalAddress() ? "localhost" : inetAddress.getHostName().toString();
+         // this.remoteHostname = inetAddress.isLoopbackAddress() || inetAddress.isAnyLocalAddress() ? "localhost" : inetAddress.getHostName().toString();
+         /*
+          * Replace inetAddress.getHostName() by a custom method using the toString() metho of the InetAddress, because
+          * that method will perform a reverse hostname lookup. So the performance of that method call depends on the
+          * performance of the network/technology stack between the JVM and the domain name server for the target host.
+          *
+          * see https://stackoverflow.com/questions/10420317/java-inetaddress-gethostname-taking-a-very-long-time-to-execute
+          * and https://stackoverflow.com/questions/9340989/javainetaddress-to-string-conversion
+          */
+         String _hostname = getHostName(inetAddress);
+         this.remoteHostname = inetAddress.isLoopbackAddress() || inetAddress.isAnyLocalAddress() ? "localhost" : _hostname;
          this.headers = new HashMap<String, String>();
+      }
+
+      private String getHostName(InetAddress inetAddress) {
+         String str = inetAddress.toString();
+         int slash = str.indexOf('/');
+         if (slash == -1) {
+            return str;
+         } else {
+            return str.substring(0, slash);
+         }
       }
 
       /**
@@ -709,7 +729,7 @@ public abstract class NanoHTTPD {
                int len = (fbuf.remaining() < MAX_HEADER_SIZE) ? fbuf.remaining() : MAX_HEADER_SIZE;
                fbuf.get(partHeaderBuff, 0, len);
                BufferedReader in
-                       = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(partHeaderBuff, 0, len), Charset.forName(contentType.getEncoding())), len);
+                  = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(partHeaderBuff, 0, len), Charset.forName(contentType.getEncoding())), len);
 
                int headerLines = 0;
                // First line is boundary string
@@ -1144,7 +1164,7 @@ public abstract class NanoHTTPD {
                   String boundary = contentType.getBoundary();
                   if (boundary == null) {
                      throw new ResponseException(Response.Status.BAD_REQUEST,
-                             "BAD REQUEST: Content type is multipart/form-data but boundary missing. Usage: GET /example/file.html");
+                        "BAD REQUEST: Content type is multipart/form-data but boundary missing. Usage: GET /example/file.html");
                   }
                   decodeMultipartFormData(contentType, fbuf, this.parms, files);
                } else {
