@@ -1,10 +1,10 @@
-package org.nanohttpd.protocols.http.tempfiles;
+package fi.iki.elonen;
 
 /*
  * #%L
- * NanoHttpd-Core
+ * NanoHttpd-Webserver
  * %%
- * Copyright (C) 2012 - 2016 nanohttpd
+ * Copyright (C) 2012 - 2015 nanohttpd
  * %%
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -33,15 +33,14 @@ package org.nanohttpd.protocols.http.tempfiles;
  * #L%
  */
 
-import org.nanohttpd.util.IFactory;
-
 /**
- * Default strategy for creating and cleaning up temporary files.
+ * @author Paul S. Hawke (paul.hawke@gmail.com) On: 9/14/13 at 8:09 AM
  */
-public class DefaultTempFileManagerFactory implements IFactory<ITempFileManager> {
+public interface WebServerPluginInfo {
 
-    @Override
-    public ITempFileManager create() {
-        return new DefaultTempFileManager();
-    }
+    String[] getIndexFilesForMimeType(String mime);
+
+    String[] getMimeTypes();
+
+    WebServerPlugin getWebServerPlugin(String mimeType);
 }

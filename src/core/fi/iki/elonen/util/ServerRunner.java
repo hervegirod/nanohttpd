@@ -1,10 +1,10 @@
-package org.nanohttpd.protocols.http;
+package fi.iki.elonen.util;
 
 /*
  * #%L
- * NanoHttpd-Core
+ * NanoHttpd-Webserver
  * %%
- * Copyright (C) 2012 - 2016 nanohttpd
+ * Copyright (C) 2012 - 2015 nanohttpd
  * %%
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -34,60 +34,42 @@ package org.nanohttpd.protocols.http;
  */
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.nanohttpd.protocols.http.NanoHTTPD.ResponseException;
-import org.nanohttpd.protocols.http.content.CookieHandler;
-import org.nanohttpd.protocols.http.request.Method;
+import fi.iki.elonen.NanoHTTPD;
 
-/**
- * Handles one session, i.e. parses the HTTP request and returns the response.
- */
-public interface IHTTPSession {
-
-    void execute() throws IOException;
-
-    CookieHandler getCookies();
-
-    Map<String, String> getHeaders();
-
-    InputStream getInputStream();
-
-    Method getMethod();
+public class ServerRunner {
 
     /**
-     * This method will only return the first value for a given parameter. You
-     * will want to use getParameters if you expect multiple values for a given
-     * key.
-     * 
-     * @deprecated use {@link #getParameters()} instead.
+     * logger to log to.
      */
-    @Deprecated
-    Map<String, String> getParms();
+    private static final Logger LOG = Logger.getLogger(ServerRunner.class.getName());
 
-    Map<String, List<String>> getParameters();
+    public static void executeInstance(NanoHTTPD server) {
+        try {
+            server.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
+        } catch (IOException ioe) {
+            System.err.println("Couldn't start server:\n" + ioe);
+            System.exit(-1);
+        }
 
-    String getQueryParameterString();
+        System.out.println("Server started, Hit Enter to stop.\n");
 
-    /**
-     * @return the path part of the URL.
-     */
-    String getUri();
+        try {
+            System.in.read();
+        } catch (Throwable ignored) {
+        }
 
-    /**
-     * Adds the files in the request body to the files map.
-     * 
-     * @param files
-     *            map to modify
-     */
-    void parseBody(Map<String, String> files) throws IOException, ResponseException;
+        server.stop();
+        System.out.println("Server stopped.\n");
+    }
 
-    /**
-     * Get the remote ip address of the requester.
-     * 
-     * @return the IP address.
-     */
-    String getRemoteIpAddress();
+    public static <T extends NanoHTTPD> void run(Class<T> serverClass) {
+        try {
+            executeInstance(serverClass.newInstance());
+        } catch (Exception e) {
+            ServerRunner.LOG.log(Level.SEVERE, "Cound nor create server", e);
+        }
+    }
 }

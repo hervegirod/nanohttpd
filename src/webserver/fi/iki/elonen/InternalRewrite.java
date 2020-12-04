@@ -1,10 +1,10 @@
-package org.nanohttpd.util;
+package fi.iki.elonen;
 
 /*
  * #%L
- * NanoHttpd-Core
+ * NanoHttpd-Webserver
  * %%
- * Copyright (C) 2012 - 2016 nanohttpd
+ * Copyright (C) 2012 - 2015 nanohttpd
  * %%
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -33,14 +33,31 @@ package org.nanohttpd.util;
  * #L%
  */
 
-/**
- * Represents a simple factory
- * 
- * @author LordFokas
- * @param <T>
- *            The Type of object to create
- */
-public interface IFactory<T> {
+import java.io.ByteArrayInputStream;
+import java.util.Map;
 
-    T create();
+import fi.iki.elonen.NanoHTTPD.Response;
+
+/**
+ * @author Paul S. Hawke (paul.hawke@gmail.com) On: 9/15/13 at 2:52 PM
+ */
+public class InternalRewrite extends Response {
+
+    private final String uri;
+
+    private final Map<String, String> headers;
+
+    public InternalRewrite(Map<String, String> headers, String uri) {
+        super(Status.OK, NanoHTTPD.MIME_HTML, new ByteArrayInputStream(new byte[0]), 0);
+        this.headers = headers;
+        this.uri = uri;
+    }
+
+    public Map<String, String> getHeaders() {
+        return this.headers;
+    }
+
+    public String getUri() {
+        return this.uri;
+    }
 }
