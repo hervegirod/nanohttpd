@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+<project name="nanohttpd" default="default" basedir=".">
+    <description>Builds, tests, and runs the project nanohttpd.</description>
+    <import file="nbproject/build-impl.xml"/>
+   <!-- =================================================================== -->
+   <!-- post NB init                                                          -->
+   <!-- =================================================================== -->
+
+   <target name="-post-init">   
+      <property name="version" value="4.2.5"/>
+      <property name="jar-core" value="nanohttpd-${version}.jar"/>     
+      <property name="jar-nanolets" value="nanohttpd-nanolets-${version}.jar"/>   
+      <property name="jar-webserver" value="nanohttpd-webserver-${version}.jar"/>               	  
+   </target>
+   
+   <!-- =================================================================== -->
+   <!-- NB overwrite targets : jar                                     -->
+   <!-- =================================================================== -->
+
+   <target depends="init,compile,-pre-jar,-do-jar-without-manifest,-post-jar" description="Build All" name="jar"/>
+
+   <target name="-do-jar-without-manifest" depends="-jar-core, -jar-nanolets, -jar-webserver" />
+   
+   <target name="-jar-core" depends="init,compile,-pre-pre-jar,-pre-jar" >
+      <jar description="core jar binary file" compress="true" jarfile="${dist.dir}/${jar-core}" >
+         <fileset defaultexcludes="yes" dir="${build.classes.dir}">
+            <include name="org/nanohttpd/protocols/Nano*.class"/>
+            <include name="org/nanohttpd/protocols/util/**/*.class"/>
+         </fileset>
+         <metainf dir="${src.core.dir}/META"/>
+      </jar>
+   </target>
+   
+   <target name="-jar-nanolets" depends="init,compile,-pre-pre-jar,-pre-jar" >
+      <jar description="nanolets jar binary file" compress="true" jarfile="${dist.dir}/${jar-nanolets}" >
+         <fileset defaultexcludes="yes" dir="${build.classes.dir}">
+            <include name="org/nanohttpd/router/**/*.class"/>
+         </fileset>
+      </jar>
+   </target>   
+   
+   <target name="-jar-webserver" depends="init,compile,-pre-pre-jar,-pre-jar" >
+      <jar description="webserver jar binary file" compress="true" jarfile="${dist.dir}/${jar-webserver}">
+         <fileset defaultexcludes="yes" dir="${build.classes.dir}">
+            <include name="org/nanohttpd/webserver/**/*.class"/>
+         </fileset>
+      </jar>
+   </target>     
+</project>
