@@ -17,10 +17,9 @@ Note: the jars are still tagged 2.3.1 even if the version is 2.3.1.1
 
 ## Quickstart
 
-We'll create a custom HTTP server project using Maven for build/dep system. This tutorial assumes you are using a Unix variant and a shell. First, install Maven and Java SDK if not already installed. Then run:
+We'll create a custom HTTP server project. First run:
 
-    mvn compile
-    mvn exec:java -pl webserver -Dexec.mainClass="org.nanohttpd.webserver.SimpleWebServer"
+    java -pl webserver -Dexec.mainClass="org.nanohttpd.webserver.SimpleWebServer"
     
 You should now have a HTTP file server running on <http://localhost:8080/>.
 
